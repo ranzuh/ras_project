@@ -1,6 +1,9 @@
 # RAS Project
 Project for Robotics and Autonomous Systems course @ UTU
 
+## Project plan
+[Check out the initial project plan draft here](projectplan.md)
+
 
 ## Setup
 ```
