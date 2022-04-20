@@ -2,22 +2,24 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Uint8
+from std_msgs.msg import UInt8
 
 from geometry_msgs.msg import Twist
 
+import time
 
-class odomSubscriber(Node):
+
+class DanceSubscriber(Node):
     def __init__(self):
         super().__init__("dance_subscriber")
         self.dance_counter = 0
         self.dance_subscription = self.create_subscription(
-            Uint8, #Uint8
+            UInt8, #Uint8
             '/dance_moves',
             self.dance_callback,
             10)
         self.dance_subscription
-        self.publisherOutcome = self.create_publisher(Uint8, '/jobdone', 10)
+        self.publisherOutcome = self.create_publisher(UInt8, '/jobdone', 10)
         
         self.publisherCMD = self.create_publisher(Twist, '/cmd_vel', 10)
         
@@ -25,35 +27,56 @@ class odomSubscriber(Node):
 
     def dance_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.data)
-        if(msg.data == 1):
+        sleep_time = 5
+        turn_vel = 0.5
+        fwd_vel = 0.4
+        print("got msg", msg.data)
+        if(msg.data == 11):
             #turn left
             data = Twist()
-            data.angular.z = 0.15
+            data.angular.z = turn_vel
             self.publisherCMD.publish(data)
+            time.sleep(sleep_time)
+            data.angular.z = 0.0
+            self.publisherCMD.publish(data)
+
             self.publisherOutcome.publish(msg)
-        elif(msg.data == 2):
+        elif(msg.data == 12):
             #turn right
             data = Twist()
-            data.angular.z = -0.15
+            data.angular.z = -turn_vel
             self.publisherCMD.publish(data)
+            time.sleep(sleep_time)
+            data.angular.z = 0.0
+            self.publisherCMD.publish(data)
+
             self.publisherOutcome.publish(msg)
-        elif(msg == 3):
+        elif(msg.data == 13):
             #idk, jump or sth
             data = Twist()
-            data.angular.z = 0.5
-            self.publisherCMD.publish(data)
+            side = -1
+            for i in range(4):
+                side *= -1
+                data.angular.z = side * turn_vel
+                self.publisherCMD.publish(data)
+                time.sleep(sleep_time/4)
+                data.angular.z = 0.0
+                self.publisherCMD.publish(data)
+            
             self.publisherOutcome.publish(msg)
-        elif(msg == 4):
+        elif(msg.data == 14):
             #bury underground
             data = Twist()
-            data.angular.z = 0.5
-            self.publisherCMD.publish(data)
+            side = -1
+            for i in range(8):
+                side *= -1
+                data.linear.x = side * fwd_vel
+                self.publisherCMD.publish(data)
+                time.sleep(sleep_time/8)
+                data.linear.x = 0.0
+                self.publisherCMD.publish(data)
+
             self.publisherOutcome.publish(msg)
-
-
-        
-        self.publisher.publish()
-        self.odom_counter += 1
         
 
 
@@ -63,7 +86,7 @@ class odomSubscriber(Node):
 
 def main():
     rclpy.init()
-    dance_sub = odomSubscriber()
+    dance_sub = DanceSubscriber()
     
     # Spin until ctrl + c
     

@@ -20,7 +20,7 @@ class TelloController(Node):
         self.image_counter = 0
         self.image_sub = self.create_subscription(Image, '/camera', self.image_sub_callback, 10)
         self.tello_pub = self.create_publisher(Twist, '/control', 10)
-        self.takeoff_pub = self.create_publisher(Empty, '/takeoff', 10)
+        #self.takeoff_pub = self.create_publisher(Empty, '/takeoff', 10)
         self.start = True
         self.detected_pub = self.create_publisher(UInt8, '/dance_moves', 10)
         self.jobdone_sub = self.create_subscription(UInt8, '/jobdone', self.jobdone_sub_callback, 10)
@@ -28,7 +28,7 @@ class TelloController(Node):
         self.last_detected = 0
         self.waiting = False
         self.lined_up = False
-        self.takeoff_pub.publish(Empty())
+        #self.takeoff_pub.publish(Empty())
 
 
     def image_sub_callback(self, msg):
@@ -61,15 +61,18 @@ class TelloController(Node):
             (corners, ids, rejected) = cv.aruco.detectMarkers(gray, arucoDict,
                 parameters=arucoParams)
             
-            print("tag ids", ids)
+            if ids is not None:
+                ids = ids[0]
+                print("tag ids", ids)
 
             if self.waiting:
                 cmdvel.linear.x = 0.0
                 cmdvel.linear.z = 0.0
                 cmdvel.linear.y = 0.0
                 cmdvel.angular.z = 0.0
-            elif len(ids) > 0 and not (ids[0] in self.detected_list): # and id not in list
+            elif ids is not None and len(ids) > 0 and not (ids[0] in self.detected_list): # and id not in list
                 self.start = False
+                
 
                 # stop rotation
                 cmdvel.angular.z = 0.0
@@ -91,15 +94,15 @@ class TelloController(Node):
                 cmdvel.angular.z = 0.0
 
                 if self.start:
-                    print("start")
+                    #print("start")
                     cmdvel.linear.z = 20.0
                 else:
-                    print("rotate")
+                    #print("rotate")
                     cmdvel.angular.z = 10.0
             
-            print(cmdvel)
+            #print(cmdvel)
             self.tello_pub.publish(cmdvel)
-            self.detected_pub.publish(msg)
+            #self.detected_pub.publish(msg)
             
 
     def jobdone_sub_callback(self, msg):
