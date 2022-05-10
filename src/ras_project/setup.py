@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                'talker = ras_project.publisher_member_function:main',
-                'listener = ras_project.subscriber_member_function:main',
+                'tello_controller = ras_project.tello_controller:main',
+                'dance_subscriber = ras_project.dance_subscriber:main',
         ],
     },
 )

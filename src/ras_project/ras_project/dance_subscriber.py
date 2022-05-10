@@ -28,7 +28,7 @@ class DanceSubscriber(Node):
     def dance_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.data)
         sleep_time = 5
-        turn_vel = 0.5
+        turn_vel = 0.6
         fwd_vel = 0.4
         print("got msg", msg.data)
         if(msg.data == 11):
