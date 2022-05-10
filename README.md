@@ -1,8 +1,11 @@
 # RAS Project
 Project for Robotics and Autonomous Systems course @ UTU
 
+## Video
+[Finished project video here](https://youtu.be/3nSI1iljMzM)
+
 ## Project plan
-[Check out the initial project plan draft here](projectplan.md)
+[Check out the project plan here](projectplan.md)
 
 
 ## Setup
